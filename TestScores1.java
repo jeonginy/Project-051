@@ -1,4 +1,4 @@
-package com.green;
+
 
 import java.util.Scanner;
 
