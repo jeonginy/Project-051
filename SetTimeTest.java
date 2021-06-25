@@ -1,4 +1,4 @@
-package prj051;
+
 class Time {
 	
 	private int hour;
