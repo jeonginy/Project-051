@@ -1,4 +1,4 @@
-package prj051;
+
 
 import java.util.Scanner;
 class DiceGame{
