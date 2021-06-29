@@ -1,4 +1,4 @@
-package comparable_ator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,7 @@ public class classStudent implements Comparable<classStudent> {
 
 	@Override
 	public int compareTo(classStudent o) {
-		// 이름 순으로 대소 비교
+		// print the average of age
 		return this.name.compareTo(o.name);
 	}
 
