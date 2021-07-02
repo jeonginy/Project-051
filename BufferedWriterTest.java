@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 public class BufferedWriterTest{
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {	//	watch out for exception 
 		
 //		Using BufferedReader & BufferedWriter instead of Scanner & System.out.println
 //		Put on BufferedWriter.flush at last
