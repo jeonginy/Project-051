@@ -1,0 +1,24 @@
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Main {
+	public static void main(String[] args) {
+		Path path = Paths.get("Users/test.txt");	//	to create 'URL' with Paths.get
+		Path allignment = Paths.get("Users/","myfolder", "test.txt");
+		Path resolve = Paths.get("Users/myfolder").resolve("test.txt");
+		
+		System.out.println(allignment);
+		System.out.println(resolve);
+		
+		File file = path.toFile();
+		
+		System.out.println(path.toString());
+		System.out.println(file.toString());
+		
+		Path path2 = Paths.get("my.txt");
+		System.out.println(path2.toAbsolutePath());
+		System.out.println(path2.toAbsolutePath().normalize());		//	to see easily, modify as a normal one
+	}
+
+}
