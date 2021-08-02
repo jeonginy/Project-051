@@ -1,0 +1,39 @@
+public class RelationTest {
+
+	private double real;
+	private double imag;
+
+	public RelationTest(double r, double i) {
+		real = r;
+		imag = i;
+
+	}
+
+	public double getReal() {
+		return real;
+	}
+
+	public double getImag() {
+		return imag;
+	}
+
+//	method add(RelationTest r) : including double r, double i
+	public RelationTest add(RelationTest r) {
+		double resultReal = real + r.getReal();
+		double resultImag = imag + r.getImag();
+		return new RelationTest(resultReal, resultImag);
+//		create instance and return the value of it
+	}
+	
+
+	public static void main(String[] args) {
+		RelationTest rel = new RelationTest(3.4, 5.0);
+		System.out.println(rel);
+	}
+
+	@Override
+	public String toString() {
+		return "RelationTest [getReal()=" + getReal() + ", getImag()=" + getImag() + "]";
+	}
+
+}
