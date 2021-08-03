@@ -1,0 +1,36 @@
+class Date {
+	private int year;
+	private String month;
+	private int day;
+	// default constructor
+	public Date() { 	// 2009.01.01
+		month = "January";
+		day = 1;
+		year = 2009;
+	}
+	// constructor	:	be able to fix year, month, day 
+	public Date(int year, String month, int day) {
+		setDate(year, month, day);
+	}
+	// constructor	:	only fix year 
+	public Date(int year) {	
+		setDate(year, "January", 1);
+	}
+	
+	private void setDate(int year, String month, int day) {
+		this.year  = year;
+		this.month = month;		
+		this.day   = day;
+//		iv			   lv
+	}
+	
+}
+public class Date_Fix {
+
+	public static void main(String[] args) {
+		Date date1 = new Date(2009, "March", 2);
+		Date date2 = new Date(2010);
+		Date date3 = new Date();
+	}
+
+}
