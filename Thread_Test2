@@ -1,0 +1,54 @@
+
+import java.util.concurrent.TimeUnit;
+
+class MyRunnable implements Runnable {
+	@Override
+	public void run() {
+		String[] message = {"Hello", "Very nice to meet you", "What do you like?", "Do you want to hang out with me?"};
+		
+			try {
+				for(int i = 0; i < message.length; i++) {
+//				Thread.sleep(2000);
+				TimeUnit.SECONDS.sleep(2);
+				Thread t = Thread.currentThread();
+								//	main Thread(t : Thread - 0)
+				System.out.println(t.getName() + " : " + message[i]);
+
+			}
+			} catch (InterruptedException e) {
+				System.out.println("Not done yet!");
+			}
+	}
+}
+public class Main6 {
+		public static void main(String[] args) throws InterruptedException {
+			Thread t = new Thread(new MyRunnable());
+			
+			t.setDaemon(true);	//	Daemon Thread : declared before Thread start
+//											true ->	main Thread gone, MyRunnable Thread gone, too
+//			t.setDaemon(false) 				false -> another Thread(main one) still activates : nothing to do with t Thread
+			
+			t.start();	//	once starts 't' Thread and check whether the program is alive, then say "keep waiting ~ ~"
+			
+			int i = 0;
+								
+			// while for keep main Thread waiting
+			while(t.isAlive()) {
+				System.out.println("keep waiting ~ ~");		//  if make while to be an annotation, comes 'Finish' at first, main Thread works(program works anyway)
+															//	if don't, comes out 'keep waiting' at first, main Thread works(program works as well)
+			// **main Thread's join**
+			// The point is that the instance waiting another is not 't' Thread, main Thread is the one waiting another finishes its work 
+			// Once 't' Thread done, main Thread wakes up then do the next work and finish
+				t.join();	// ** important **							
+				// if there's no join function, program finishes its work or waits 4 sec then finishes
+					
+//					t.interrupt();
+//					t.join();
+					
+//				}
+			}
+			Thread main = Thread.currentThread();
+			System.out.println( main.getName() + " :  Finish");
+		}
+}
+
