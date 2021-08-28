@@ -1,0 +1,42 @@
+import java.util.Scanner;
+
+public class Main {
+	// An example for doing input and output at the same time
+	static long startTime = 0;
+	static char ch = 'A';
+	
+	public static void main(String[] args) {
+		Thread t = new Thread(new Runnable() {
+//	 Thread for keeping getting output 
+			@Override
+			public void run() {
+				while(true) {
+					startTime = System.currentTimeMillis();
+					ch = (char) (65+(int) (Math.random() * 27));
+					System.out.println(ch);
+					
+					try {
+						Thread.sleep((long)((Math.random()* 5000)) + 1000 );
+					} catch(InterruptedException e) {
+						e.printStackTrace();
+					}
+				}			//-------------	output
+			}
+			
+		});
+		
+		
+		System.out.println("input text coming out on screen");
+		t.start();
+		
+		Scanner in = new Scanner(System.in);
+		while(true){
+			// demonstrating this action at the same time whilst main thread does its own works
+			String str = in.next();
+			if(str.charAt(0) == ch) {
+				System.out.println(System.currentTimeMillis() - startTime);	
+			}
+		}				//-------------	input
+	}
+
+}
