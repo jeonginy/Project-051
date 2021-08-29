@@ -1,0 +1,28 @@
+class Infinite extends Thread {
+
+	@Override
+	public void run() {
+		try {	// 	Better off checking 'interrupted' instead of just repeating infinitely
+			while(!isInterrupted()) {		//	check if being interrupted, if it is then 'repeat'
+				System.out.println("repeat");
+				sleep(1000);
+			}
+		} catch(InterruptedException e) {
+			System.out.println("be interrupted. current isInterrupted value : " + 
+		isInterrupted());
+		}
+		
+	}
+}
+public class Main2 {
+	public static void main(String[] args) throws InterruptedException {
+				// main thread starts t and thread from Infinite class interrupts after 5 sec which is an exception, then stops all action and is dead
+	Thread t = new Infinite();
+	t.start();
+	
+	Thread.sleep(5000);
+	t.interrupt();
+	
+	}
+
+}
