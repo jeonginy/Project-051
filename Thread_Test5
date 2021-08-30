@@ -1,0 +1,91 @@
+class MyClass {
+	private int myInt = 0;
+	private int myInt2 = 0;
+	private Object lock = new Object();
+	
+	//	- Thread는 공유 되는 자원들을 복사해서 가져와 사용하게 됨 -> 공유되는 자원들이 변하지 않고 그대로 존재
+	//	복사해서 가져와 변경하는 순간에 값의 정확도가 변질될 가능성이 높음 (동시성 접근으로 인해 값의 정확도가 떨어짐 -> 프로그램 엉망)
+	//	===================================================================================================================================
+	//  - 공유된 자원을 어쩔 수 없이 쓰게 될 경우, 동시 접근을 막기 위해서 locked = synchronized 수행  
+	public int getMyInt() { 	// 괄호 안에 있는 일을 수행할 때, locked 
+//		작업이 오래걸립니다.(멀티-스레드하고는 상관없는 safe한 작업) : 대부분은 lock을 걸 대상을 지정하고, 동기화가 필요한 공간에서만 진행하는게 좋음
+		synchronized (lock) {	//	this(해당 객체)에 locked : lock을 걸 대상을 정해줌 - 무조건 객체여야 함 
+			return myInt;		//	특정한 영역을 임계 영역으로 지정
+		}
+	}	// 일이 다 끝나고 나면 unlocked 
+	
+	public void increment() {
+		synchronized(lock) {		//	lock을 걸어줄 대상을 정하고, 문장(수행될 문장)을 정해줄 수 있음 
+		myInt++;					//	동기화가 필요한 문장(수행될 문장) : 필요한 만큼만 lock을 걸어둘 수 있어서 좋음 
+		}
+	}
+	public void decrement() {
+		synchronized(lock) {
+		myInt--;
+		}
+	}	
+	// 변수를 복사해서 변형시켜서 사용하려고 하는 synchronized thread들을 세워 둠 
+	// lock이 걸리는 대상 : synchronized - 같은 lock을 공유하는 객체들 -> lock을 걸어두고 임무를 수행 or 기다림 
+	public synchronized int getMyInt2() {	//	전체 메서드를 임계 영역으로 지정 
+		return myInt2;						
+	}
+	
+	public synchronized void increment2() {
+		myInt2++;
+	}
+	public synchronized void decrement2() {
+		myInt2--;
+	}
+}
+//	일을 다 수행한 후에, 객체에 걸린 lock을 풀어줌 : 대기하고 있는 객체들 중 가장 빠른 객체가 가장 먼저 수행됨 
+public class Main {
+	public static void main(String[] args) throws InterruptedException {
+		MyClass my = new MyClass();
+		Thread incre1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (int i = 0; i < 2000; i++) {
+					my.increment();
+				}
+			}
+		});
+		Thread incre2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (int i = 0; i < 3000; i++) {
+					my.increment();
+				}
+			}
+		});
+		Thread decre1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for(int i = 0; i < 2000; i++) {
+					my.decrement();
+				}
+			}
+		});
+		Thread decre2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for(int i = 0; i < 3000; i++) {
+					my.decrement();
+				}
+			}		
+		});
+		incre1.start();
+		incre2.start();
+		decre1.start();
+		decre2.start();
+		
+		incre1.join();
+		incre2.join();
+		decre1.join();
+		decre2.join();
+		
+		System.out.println(my.getMyInt());
+		
+		
+	}
+	
+}
