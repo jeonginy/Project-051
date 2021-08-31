@@ -1,0 +1,85 @@
+// ======  control action   ====================================================================================================
+//	Ordering is important ㅣ lock the condition the order  
+class Buffer {
+	private int data;
+	private boolean empty = true;
+
+	//	get() method :wait till true turns to false
+	public synchronized int get() {
+		while (empty) {		//	once a consumer gets a chicken and Buffer is empty stop working (waiting)
+			try {			//	must be synchronized in this field
+				wait();		//	hold thread which is related to : infinite  <-> sleep : just for a sec
+			} catch (InterruptedException e) {
+			}
+		}
+		empty = true;
+		notifyAll();
+		return data;
+	}
+	//	put() method : wait till false turns to true
+	public synchronized void put(int data) {
+		while (!empty) {	//	when Buffer is empty, re-start working
+			try {
+				wait();
+			} catch (InterruptedException e) {
+			}
+		}
+		empty = false;
+		this.data = data;	// if data is coincided with the condition, wake other instance up or wait
+		notifyAll();	//	to wake up all instance in this field, which is synchronized 
+						//	wait() -> wake up -> lock() -> working on
+	}
+}
+// ======  supplier  ====================================================================================================
+class Producer implements Runnable {
+	private Buffer buffer;
+
+	public Producer(Buffer buffer) {
+		this.buffer = buffer;
+	}
+
+	@Override
+	public void run() {
+		for (int i = 1; i <= 10; i++) {
+			buffer.put(i);
+			System.out.println("supplier : create " + i + "'s chicken");
+
+			try {
+				Thread.sleep((int) (Math.random()) * 2000);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+}
+// ======  consumers  ====================================================================================================
+class Consumer implements Runnable {
+	private Buffer buffer;
+
+	public Consumer(Buffer buffer) {
+		this.buffer = buffer;
+	}
+
+	@Override
+	public void run() {
+		for (int i = 1; i <= 10; i++) {
+			int data = buffer.get();
+			System.out.println("consumer : buys " + data + "'s chicken");
+			try {
+				Thread.sleep((int) (Math.random()) * 2000);
+			} catch (InterruptedException e) {
+			}
+		}
+
+	}
+}
+public class Main2 {
+	public static void main(String[] args) {
+		Buffer buffer = new Buffer();
+		Thread prod = new Thread(new Producer(buffer));
+		Thread cons = new Thread(new Consumer(buffer));
+		
+		prod.start();
+		cons.start();
+	}
+
+}
