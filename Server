@@ -11,13 +11,13 @@ public class Server {
 	private static List<DataOutputStream> list = new ArrayList<>();
 
 	public static void main(String[] args) {
-		System.out.println("-- 서버 시작 --");
+		System.out.println("-- SERVER STARTS --");
 
 		try (ServerSocket server = new ServerSocket(4885)) {
 			while (true) {
-				System.out.println("--- 사용자 접속 대기 ---");
-				Socket client = server.accept(); // 사용자 접속 허용
-				// 클라이언트 : 쓰레드 ( 1 : 1 )
+				System.out.println("--- WAITING FOR A CLIENT'S CONNECTION ---");
+				Socket client = server.accept(); // ACCEPT USER CONNECTION
+				// CLIENT : THREAD ( 1 : 1 )
 				System.out.println("--- 사용자 접속 ---");
 				ChatThread chatThread = new ChatThread(client);
 				chatThread.start();
@@ -27,21 +27,21 @@ public class Server {
 		}
 	}
 
-	// 사용자 list에 등록
+	// UPLOAD'S ON UESR'S LIST
 	public static void add(DataOutputStream dos) {
 		synchronized (list) {
 			list.add(dos);
 		}
 	}
 
-	// 사용자 list에서 제거
+	// REMOVE A USER FROM LIST
 	public static void remove(DataOutputStream dis) {
 		synchronized (list) {
 			list.remove(dis);
 		}
 	}
 
-	// 모든 접속한 사용자에게 메세지 보내기
+	// SEND TO ALL USERS
 	public static void broadcast(String message) {
 		synchronized (list) {
 			for (DataOutputStream dos : list) {
@@ -56,7 +56,7 @@ public class Server {
 	}
 }
 
-// 쓰레드를 상속 
+// EXTENDS THREAD
 class ChatThread extends Thread {
 	private Socket client;
 	private DataOutputStream dos;
@@ -69,7 +69,7 @@ class ChatThread extends Thread {
 			dos = new DataOutputStream(client.getOutputStream());
 			dis = new DataInputStream(client.getInputStream());
 
-			Server.add(dos); // 서버에 등록 시키기
+			Server.add(dos); // ADD TO SERVER
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -80,114 +80,10 @@ class ChatThread extends Thread {
 		String line = null;
 		try {
 			while ((line = dis.readUTF()) != null) {
-				if (line.equals("/quit")) { // 종료 동작
+				if (line.equals("/quit")) { 	//  PROTOCOL FOR QUITING PROGRAM
 					dos.writeUTF(line);
-					Server.remove(dos); // 목록에서 제거
-					break;import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-
-public class Server {
-	private static List<DataOutputStream> list = new ArrayList<>();
-
-	public static void main(String[] args) {
-		System.out.println("-- 서버 시작 --");
-
-		try (ServerSocket server = new ServerSocket(4885)) {
-			while (true) {
-				System.out.println("--- 사용자 접속 대기 ---");
-				Socket client = server.accept(); // 사용자 접속 허용
-				// 클라이언트 : 쓰레드 ( 1 : 1 )
-				System.out.println("--- 사용자 접속 ---");
-				ChatThread chatThread = new ChatThread(client);
-				chatThread.start();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	// 사용자 list에 등록
-	public static void add(DataOutputStream dos) {
-		synchronized (list) {
-			list.add(dos);
-		}
-	}
-
-	// 사용자 list에서 제거
-	public static void remove(DataOutputStream dis) {
-		synchronized (list) {
-			list.remove(dis);
-		}
-	}
-
-	// 모든 접속한 사용자에게 메세지 보내기
-	public static void broadcast(String message) {
-		synchronized (list) {
-			for (DataOutputStream dos : list) {
-				try {
-					dos.writeUTF(message);
-					dos.flush();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-}
-
-// 쓰레드를 상속 
-class ChatThread extends Thread {
-	private Socket client;
-	private DataOutputStream dos;
-	private DataInputStream dis;
-
-	public ChatThread(Socket client) {
-		this.client = client;
-
-		try {
-			dos = new DataOutputStream(client.getOutputStream());
-			dis = new DataInputStream(client.getInputStream());
-
-			Server.add(dos); // 서버에 등록 시키기
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void run() {
-		String line = null;
-		try {
-			while ((line = dis.readUTF()) != null) {
-				if (line.equals("/quit")) { // 종료 동작
-					dos.writeUTF(line);
-					Server.remove(dos); // 목록에서 제거
+					Server.remove(dos); //  REMOVE FROM LIST
 					break;
-				} else {
-					Server.broadcast(line);
-				}
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (client != null) {
-				try {
-					client.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-}
-
 				} else {
 					Server.broadcast(line);
 				}
