@@ -1,0 +1,35 @@
+import javax.swing.JOptionPane;
+
+public class Interrupt_ex {
+	public static void main(String[] args) {
+		MyThread t = new MyThread();
+		t.start();
+		System.out.println("isInterrupted():" + t.isInterrupted());		// the result is false
+		
+		String input = JOptionPane.showInputDialog("input anything");
+		System.out.println("you have put " + input + ".");
+		
+		t.interrupt(); // when calling interrupt(), the state of interrupted turns to true
+
+		System.out.println("isInterrupted():" + t.isInterrupted()); 	// the result is true
+		System.out.println("isInterrupted():" + t.isInterrupted());	
+		// check whether main thread is interrupted
+		System.out.println("Interrupted() : " + Thread.interrupted());	//	false
+	}
+
+}
+
+class MyThread extends Thread {
+
+	@Override
+	public void run() {
+		int i = 10;
+
+		while (i != 0 && !isInterrupted()) {
+			System.out.println((i--));
+			for (long x = 0; x < 2500000000L; x++);		//	time delay
+		}
+		System.out.println("The countdown is over");
+	}
+
+}
