@@ -1,0 +1,33 @@
+import java.io.File;
+
+@WebServlet("/upload")
+@MultipartConfig(location = "/Users/jeongin_yun/mc", fileSizeThreshold = 1024 * 1024 * 10
+					, maxFileSize = 1024 * 1024 * 50)
+public class UploadServlet extends HttpServlet {
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("사용자가 파일 업로드 요청");
+		
+		Part p = req.getPart("upload");
+		System.out.println(p.getName());
+		System.out.println(p.getSubmittedFileName());
+		
+		for (String name : p.getHeaderNames()) {
+			System.out.println(name + ":" + p.getHeader(name));
+		}
+		
+		String path = getServletContext().getRealPath("") + "files";
+		System.out.println(path + File.separator
+							+ p.getSubmittedFileName());
+		
+		p.write(path + File.separator
+				+ p.getSubmittedFileName());
+	}
+}
+
+
+
+
+
+
+
