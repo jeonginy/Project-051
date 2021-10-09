@@ -1,0 +1,21 @@
+import java.io.IOException;
+
+@WebServlet("/download")
+public class DownloadServlet extends HttpServlet {
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		InputStream in = getServletContext().getResourceAsStream("/WEB-INF/files/log4j-1.2.17.jar");
+		
+		OutputStream out = resp.getOutputStream();
+		
+		resp.setContentType("application/octet-stream");
+		resp.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode("log4j-1.2.17.jar", "UTF-8"));
+		
+		byte[] b = new byte[1024];
+		int length = 0;
+		while ((length = in.read(b, 0, b.length)) != -1) {
+			out.write(b, 0, length);
+			out.flush();
+		}
+	}
+}
