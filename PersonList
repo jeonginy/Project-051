@@ -1,0 +1,20 @@
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/personList")
+public class PersonListServlet extends HttpServlet {
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("User Requests the list of Person");
+		PersonDAO dao = new PersonDAO();
+		List<Person> list = dao.selectAll();
+		req.setAttribute("list", list);
+		req.getRequestDispatcher("/WEB-INF/personlist.jsp").forward(req, resp);
+	}
+}
