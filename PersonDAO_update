@@ -1,0 +1,27 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import kr.co.greenart.ConnectionProvider;
+
+public class PersonDAO {
+	public int update(int id, String name, int age) {
+		String query = "UPDATE person SET name = ?, age = ? WHERE id = ?";
+		try (Connection conn = ConnectionProvider.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setString(1, name);
+			stmt.setInt(2, age);
+			stmt.setInt(3, id);
+			return stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	public int update(Person p) {
+		return update(p.getId(), p.getName(), p.getAge());
+	}
+}
