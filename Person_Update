@@ -1,0 +1,34 @@
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/personUpdate")
+public class PersonUpdateServlet extends HttpServlet {
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
+		
+		int id = Integer.parseInt(req.getParameter("id"));
+		String name = req.getParameter("name");
+		int age = Integer.parseInt(req.getParameter("age"));
+		
+		System.out.println("User requests update " + id);
+		System.out.println("New name: " + name);
+		System.out.println("New age: " + age);
+		
+		PersonDAO dao = new PersonDAO();
+		dao.update(id, name, age);
+		
+		resp.sendRedirect("/personList");
+	}
+}
+
+
+
+
+
+
