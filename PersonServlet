@@ -1,0 +1,93 @@
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/person")
+public class PersonServlet extends HttpServlet {
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("requests by 'GET'method");
+		req.getRequestDispatcher("/WEB-INF/form.jsp")
+			.forward(req, resp);
+	}
+	
+	// 사용자가 get 방식으로 요청한 form에서 입력한 파라미터를 post 방식으로 전송했을 때 처리
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 사용자 요청 확인용 로그
+		System.out.println("requests by 'POST'method");
+		// 입력 파라미터 인코딩 설정
+		req.setCharacterEncoding("UTF-8");
+		// 입력 파라미터 값 가지고 오기.
+		String name = req.getParameter("name");
+		String age = req.getParameter("age");
+		
+		// 사용자 입력값 검증
+		// 1. null or empty 체크
+		// 2. 이름 값 유효성 확인. (공백 체크)
+		// 3. 나이 값 유효성 확인. (공백 체크) (숫자 확인) (음수 확인)
+		// 유효하지 않을 때 에러 메세지 만들기.
+		List<String> errorList = checkParams(name, age);
+		System.out.println("이름: " + name);
+		System.out.println("나이: " + age);
+		
+		if (errorList.size() > 0) {
+			req.setAttribute("errorList", errorList);
+			req.getRequestDispatcher("/WEB-INF/form.jsp")
+				.forward(req, resp);
+		} else {
+			PersonDAO dao = new PersonDAO();
+			dao.insert(name, Integer.parseInt(age));
+			resp.sendRedirect("/");
+		}
+	}
+	
+	private boolean nullOrEmptyOrHasWhiteSpace(String paramValue) {
+		if (paramValue == null || paramValue.trim().length() == 0 || paramValue.trim().contains(" ")) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isMinus(int paramValue) {
+		if (paramValue < 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isNumber(String paramValue) {
+		try {
+			Integer.parseInt(paramValue);
+			return true; 
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+	
+	private List<String> checkParams(String paramName, String paramAge) {
+		List<String> errorList = new ArrayList<>();
+		if (nullOrEmptyOrHasWhiteSpace(paramName)) {
+			errorList.add("not blank in name");
+		}
+		if (nullOrEmptyOrHasWhiteSpace(paramAge)) {
+			errorList.add("not blank in age");
+		} else {
+			if (!isNumber(paramAge)) {
+				errorList.add("enter number in age");
+			} else {
+				int age = Integer.parseInt(paramAge);
+				if (isMinus(age)) {
+					errorList.add("not negative number");
+				}
+			}
+		}
+		return errorList;
+	}
+}
