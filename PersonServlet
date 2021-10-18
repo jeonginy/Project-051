@@ -34,8 +34,8 @@ public class PersonServlet extends HttpServlet {
 		// 3. 나이 값 유효성 확인. (공백 체크) (숫자 확인) (음수 확인)
 		// 유효하지 않을 때 에러 메세지 만들기.
 		List<String> errorList = checkParams(name, age);
-		System.out.println("이름: " + name);
-		System.out.println("나이: " + age);
+		System.out.println("name: " + name);
+		System.out.println("age: " + age);
 		
 		if (errorList.size() > 0) {
 			req.setAttribute("errorList", errorList);
