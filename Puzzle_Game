@@ -1,0 +1,31 @@
+import java.util.Scanner;
+
+public class Puzzle_Game {
+	public static void main(String[] args) {
+		String[] words = { "banana", "strawberry", "pineapple", "grape", "mandarin" };
+
+		Scanner in = new Scanner(System.in);
+
+		for (int i = 0; i < words.length; i++) {
+			char[] question = words[i].toCharArray();	//	words배열은 String에서 char로 변경 
+			//	"banana" -> "b""a""n""a""n""a"
+						//	 0	1  2  3  4  5 
+			for (int j = 0; j < question.length; j++) {
+				int random = (int) (Math.random() * question.length);	//	question에 길이에 맞게 랜덤으로 숫자 생성
+				char tmp = question[j];		//	담겨있는 char배열을("b""a""n""a""n""a") tmp에 담아놓음 
+				question[j] = question[random];	//	question 자리에 랜덤 순서로 섞인 단어를 넣음 
+				question[random] = tmp;		//	섞인 단어를 tmp에 넣음 (question[random] <- tmp) 
+
+				System.out.printf("Q.%d. %s의 정답을 입력하세요. >> ", i + 1, new String(question));
+				String answer = in.nextLine();
+
+				if (words[i].equals(answer.trim())) {
+					System.out.println("맞았습니다\n");
+				} else {
+					System.out.println("틀렸습니다.\n");
+				}
+			}
+		}
+	}
+
+}
